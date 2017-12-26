@@ -3,3 +3,5 @@ config/
 jar/
 logs/
 !logs/README.md
+public/.well-known
+

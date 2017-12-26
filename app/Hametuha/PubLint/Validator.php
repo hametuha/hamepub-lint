@@ -107,7 +107,11 @@ class Validator
      */
     protected static function generateCommand($jar, $epub, $xml, $version)
     {
-        return sprintf('java -jar %s %s -o %s', $jar, $epub, $xml);
+        if ( preg_match( '#epubcheck-3\.0(\.1)\.jar$#u', $jar ) ) {
+            return sprintf('java -jar %s %s -out %s', $jar, $epub, $xml);
+        } else {
+            return sprintf('java -jar %s %s -o %s', $jar, $epub, $xml);
+        }
     }
 
 
@@ -150,16 +154,44 @@ class Validator
      * @param Request $request
      * @param Response $response
      * @param array $args
-     * @return void
+     * @return Response
      */
     public static function handlePostRequest(Request $request, Response $response, array $args)
     {
         try {
-            $version = isset( $args['version'] ) ? $args['version'] : self::EPUB_LATEST;
+            $version = isset($args['version']) ? $args['version'] : self::EPUB_LATEST;
             $xml_path = Validator::validatePostBody($version);
-            header( 'Content-Type: text/xml; charset=UTF-8');
-            readfile( $xml_path );
-            exit;
+            $json = [
+                'success' => false,
+                'status'  => 'error',
+                'messages' => [],
+            ];
+            try {
+                $xml = simplexml_load_file($xml_path);
+                if ($xml && $xml->repInfo->messages->count()) {
+                    $error = 0;
+                    foreach ($xml->repInfo->messages->message as $message) {
+                        // Check if message is fatal
+                        if (preg_match('#(FATAL|ERROR)#ui', $message)) {
+                            $error++;
+                        }
+                        $json['messages'][] = (string) $message;
+                    }
+                    if (!$error) {
+                        $json['success'] = true;
+                        $json['status'] = 'success_with_error';
+                    }
+                } elseif ($xml) {
+                    $json['success'] = true;
+                    $json['status'] = 'success';
+                    $json['messages'][] = 'SUCCESS: This ePub is valid!';
+                } else {
+                    $json['messages'][] = 'Error: XML invalid.';
+                }
+            } catch (\Exception $e) {
+                $messages[] = 'Error: ' . $e->getMessage();
+            }
+            return $response->withJson($json);
         } catch (\Exception $e) {
             return $response->withJson([
                 'message' => $e->getMessage(),
