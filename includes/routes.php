@@ -46,3 +46,12 @@ $app->post('/payload', function (Request $request, Response $response, array $ar
         ], $e->getCode());
     }
 });
+
+// Monitor site
+$app->get('/monitor', function (Request $request, Response $response, array $args) {
+    $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
+    return $response->withJson([
+        'status' => 'success',
+        'timestamp' => $now->format(DateTime::ATOM),
+    ], 200);
+});
