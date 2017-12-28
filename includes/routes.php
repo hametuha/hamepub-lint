@@ -5,11 +5,13 @@ use Slim\Http\Response;
 
 use Hametuha\PubLint\Validator;
 
-// Routes.
+// Home.
 $app->get('/', function (Request $request, Response $response, array $args) {
     // Render index view
+    $versions = Validator::getAvailables();
+    rsort($versions);
     return $this->renderer->render($response, 'index.phtml', [
-        'versions' => Validator::getAvailables(),
+        'versions' => $versions,
     ]);
 });
 
@@ -24,7 +26,7 @@ $app->post('/payload', function (Request $request, Response $response, array $ar
     try {
         $github_token = Validator::base() . '/GITHUB_TOKEN';
         if (!file_exists($github_token) || !($token = file_get_contents($github_token))) {
-            throw new Exception('Token not found.', 404);
+            throw new \Exception('Token not found.', 404);
         }
         $hash = 'sha1=' . hash_hmac('sha1', $body, $token);
         $header = $request->getHeader('X-Hub-Signature');

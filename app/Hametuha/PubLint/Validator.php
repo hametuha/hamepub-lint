@@ -120,11 +120,12 @@ class Validator
      *
      * @param string $data Binary data.
      * @param string $version ePub validator version.
+     * @param string $epub    ePub file.
      *
      * @return string
      * @throws \Exception Failed to get XML result, throws error.
      */
-    public static function validate($data, $version)
+    public static function validate($data, $version, $epub = '')
     {
         // Check jar file.
         $jar_file = self::getJarFile($version);
@@ -135,8 +136,13 @@ class Validator
         $tmp_name = tempnam(sys_get_temp_dir(), 'epub');
         $tmp_epub = $tmp_name . '.epub';
         $tmp_result = $tmp_name . '.xml';
-        if (file_exists($tmp_epub) || !is_writable(dirname($tmp_epub)) || !file_put_contents($tmp_epub, $data)) {
+        if (file_exists($tmp_epub) || !is_writable(dirname($tmp_epub))) {
             throw new \Exception('Cannot write file. Please try again later.', 403);
+        }
+        if ($epub && file_exists($epub)) {
+            $tmp_epub = $epub;
+        } else {
+            file_put_contents($tmp_epub, $data);
         }
         // Validate epub.
         $command = self::generateCommand($jar_file, $tmp_epub, $tmp_result, $version);
@@ -194,8 +200,9 @@ class Validator
             return $response->withJson($json);
         } catch (\Exception $e) {
             return $response->withJson([
-                'message' => $e->getMessage(),
-                'status'  => $e->getCode(),
+                'messages' => [ $e->getMessage() ],
+                'status'   => $e->getCode(),
+                'success'  => false,
             ], $e->getCode());
         }
     }

@@ -1,56 +1,295 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8"/>
-        <title>HamePub Lint</title>
-        <link href='//fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
-        <style>
-            body {
-                margin: 50px 0 0 0;
-                padding: 0;
-                width: 100%;
-                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-                text-align: center;
-                color: #aaa;
-                font-size: 18px;
-            }
-            h1 {
-                color: #719e40;
-                letter-spacing: -3px;
-                font-family: 'Lato', sans-serif;
-                font-size: 100px;
-                font-weight: 200;
-                margin-bottom: 0;
-            }
-            .container{
-                text-align: left;
-                margin: 0 auto;
-                padding: 10px;
-                max-width: 400px;
-            }
-            .no-version{
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>HamePub Lint</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-            }
-        </style>
-    </head>
-    <body>
-        <h1>HamePub Lint</h1>
-        <div>Online ePubCheck Runner</div>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+          integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link href='/assets/css/style.css?s=<?= filemtime(dirname(__DIR__) . '/public/assets/css/style.css') ?>'
+          rel="stylesheet">
 
+    <link rel="apple-touch-icon" sizes="57x57" href="/assets/img/favicons/assets/img/favicons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/assets/img/favicons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/assets/img/favicons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/favicons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/assets/img/favicons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/assets/img/favicons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/assets/img/favicons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/img/favicons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/img/favicons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/img/favicons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/favicons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/assets/img/favicons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+</head>
+<body data-spy="scroll" data-target="#navbar-main">
+
+<div id="publint">
+    <nav class="navbar fixed-top" id="navbar-main">
+        <span class="navbar-brand mb-0 h1">HamePub Lint</span>
+        <ul class="nav" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link" href="#features">
+                    <span class="oi oi-bolt" title="Features" aria-hidden="true"></span>
+                    <span class="d-none d-sm-inline">Features</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#try">
+                    <span class="oi oi-circle-check" title="Try" aria-hidden="true"></span>
+                    <span class="d-none d-sm-inline">Try</span>
+                </a>
+            </li>
+            <li class="">
+                <a class="nav-link" href="#about">
+                    <span class="oi oi-question-mark" title="About" aria-hidden="true"></span>
+                    <span class="d-none d-sm-inline">About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <section class="hl-header text-center">
         <div class="container">
-            <?php if ($versions) : ?>
-                <ul>
-                    <?php foreach ($versions as $version) : ?>
-                        <li>
-                            Version <?= htmlspecialchars($version) ?>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php else : ?>
-                <p class="no-version">
-                    No versions available!
-                </p>
-            <?php endif; ?>
+            <h1 class="hl-header-title">HamePub Lint</h1>
+            <div class="hl-header-lead">Online ePubCheck Runner</div>
         </div>
-    </body>
+    </section>
+
+    <section id="features">
+        <div class="container">
+
+            <div class="row text-center">
+                <div class="col">
+                    <div class="feature" style="width: 20rem;">
+                        <span class="oi oi-target" title="Simple" aria-hidden="true"></span>
+                        <div class="feature-body">
+                            <h4 class="feature-title">Simple</h4>
+                            <p class="feature-text">
+                                You don't have to install Java.
+                                No need to open browser and google "epub check online".
+                                Just set up REST API request, that's it.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="feature" style="width: 20rem;">
+                        <span class="oi oi-timer" title="Up to date" aria-hidden="true"></span>
+                        <div class="feature-body">
+                            <h4 class="feature-title">Up to date</h4>
+                            <p class="feature-text">
+                                We will continue to update ePubCheck tool.
+                                REST endpoint will keep up-to-date.
+                                You will know if your old ePub is outdated.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="feature" style="width: 20rem;">
+                        <span class="oi oi-graph" title="Continuous" aria-hidden="true"></span>
+                        <div class="feature-body">
+                            <h4 class="feature-title">Continuous</h4>
+                            <p class="feature-text">
+                                Making ePub is somehow tiring.
+                                Automation of quality check will relieve you of headaches of checking.
+                                Less ache, more quality.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="try" class="text-center">
+        <div class="container">
+            <h2 class="try-title">Try ePubCheck</h2>
+            <div class="row">
+                <div class="col-sm try-file">
+                    <hr class="d-xs-block d-sm-none"/>
+                    <h3 class="try-subtitle">REST API</h3>
+                    <p>
+                        Just send post request to
+                        <code style="word-break: break-all">https://lint.hametuha.pub/validator</code>.
+                        ePub file should be BASE64 encoded and attach it as POST body.
+                        If response JSON's parameter <code>success</code> is true, your ePub is valid.
+                        See example.
+                    </p>
+                    <hr class="d-xs-block d-sm-none"/>
+                    <h3 class="try-subtitle">Try Now</h3>
+                    <form class="try-form" action="/validator">
+                        <div class="form-group">
+                            <label for="try-version">Validator Version</label>
+                            <select id="try-version" name="try-version" class="form-control">
+                                <?php if ($versions) : ?>
+                                    <option value="<?= htmlspecialchars($versions[0]) ?>">
+                                        Latest(<?= htmlspecialchars($versions[0]) ?>)
+                                    </option>
+                                    <?php foreach ($versions as $version) : ?>
+                                        <option value="<?= htmlspecialchars($version) ?>">
+                                            Version <?= htmlspecialchars($version) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php else : ?>
+                                    <option value="" disabled>No Validator</option>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="try-file">Choose File</label>
+                            <input type="file" class="form-control-file" id="try-file" name="try-file">
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-lg btn-success">Validate</button>
+                        </div>
+                    <form>
+                </div>
+                <div class="col-sm try-rest">
+                    <hr class="d-xs-block d-sm-none"/>
+                    <h3 class="try-subtitle">REST API</h3>
+                    <?php
+                    $str = <<<'HTML'
+                    <pre class="text-left hl-code-example">// PHP Example
+                        $epub_content = file_get_contents($epub_path);
+                        $epub_encoded = base64_encode($epub_content);
+                        $ch = curl_init('https://lint.hametuha.pub/validator');
+                        curl_setopt_array($ch, [
+                            CURLOPT_POSTFIELDS => $epub_encoded,
+                            CURLOPT_POST       => true,
+                            CURLOPT_RETURNTRANSFER => 1,
+                            CURLOPT_SSL_VERIFYPEER => false,
+                            CURLOPT_SSL_VERIFYHOST => false,
+                            CURLOPT_HTTPHEADER => [
+                                'Content-Type: application/octet-stream'
+                            ],
+                        ]);
+                        $response = curl_exec($ch);
+                        if (!$response) {
+                            // Error
+                            return curl_error($ch);
+                        }
+                        $response = json_decode($response);
+                        if ($response->success) {
+                            return true;
+                        } else {
+                            return $response->messages;
+                        }
+                    </pre>
+HTML;
+                    echo implode("\n", array_map(function($row){
+                        return preg_replace('#^ {24}#u', '', $row);
+                    }, explode("\n", $str)));
+                    ?>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm">
+                    <h2>Who made this?</h2>
+                    <p>
+                        A japanese novel site <a href="https://hametuha.com/">Hametuha</a> made this.<br/>
+                        We used ePubCheck for years, but web development environment is changing.<br/>
+                        Instead of installing Java on web server, we created API based service.
+                    </p>
+                </div>
+
+
+                <div class="col-sm">
+                    <h2>Terms of Service</h2>
+                    <p>
+                        You can user this site free by any reason.<br/>
+                        But this service is provided "AS IS".<br/>
+                        No warranty, No liability. Everything ows to you.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    <h2>Acknowledgement</h2>
+                    <p>
+                        This service is based on <a href="https://github.com/IDPF/epubcheck">EpubCheck</a>.
+                        And Web site is build with <a href="https://github.com/IDPF/epubcheck">Slim Framework</a>.
+                        We send thanks to them.
+                    </p>
+                </div>
+
+
+                <div class="col-sm">
+                    <h2>How to Contribute</h2>
+                    <p>
+                        This Web site's code is hosted on <a href="https://github.com/hametuha/hamepub-lint">Github</a>.
+                        Feel free to send <a href="https://github.com/hametuha/hamepub-lint/pulls">Pull Requests</a>
+                        and any <a href="https://github.com/hametuha/hamepub-lint/issues">issues</a> are welcomed.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <footer class="navbar fixed-bottom navbar-light bg-light justify-content-between">
+        <span class="navbar-text">
+            &copy; 2017 <a href="https://hametuha.co.jp/">Hametuha INC.</a>
+        </span>
+        <div>
+
+            <ul class="nav collapse">
+                <li class="nav-item active">
+                    <a class="nav-link" href="https://github.com/hametuha/hamepub-lint">
+                        Gh
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://twitter.com/hametuha">
+                        Tw
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://facebook.com/hametuha.inc">
+                        Fb
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </footer>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"
+        integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"
+        integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ"
+        crossorigin="anonymous"></script>
+<script src="/assets/js/app.js?s=<?= filemtime(dirname(__DIR__) . '/public/assets/js/app.js') ?>"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-1766751-14"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'UA-1766751-14');
+</script>
+</body>
 </html>

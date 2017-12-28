@@ -1,0 +1,163 @@
+@charset "UTF-8";
+
+@import "open-iconic-bootstrap.scss";
+
+$idpf-color: #81B93C;
+$idpf-blue: #00438D;
+
+$header-height: 56px;
+
+nav#navbar-main{
+  background-color: $idpf-color;
+  .navbar-brand{
+    color: #fff;
+  }
+  .nav a{
+    transition: background-color .3s linear;
+    &:link, &:visited{
+      color: #fff;
+      text-decoration: none;
+      background-color: rgba(0, 0, 0, 0);
+    }
+    &:hover, &:active{
+      color: #fff;
+      text-decoration: none;
+      background-color: rgba(0, 0, 0, .2);
+    }
+
+  }
+}
+
+.hl-header{
+  background: url("../img/background.jpeg") center center no-repeat;
+  background-size: cover;
+  min-height: 400px;
+  font-size: 80px;
+  padding-top: $header-height;
+  @media only screen and (max-width: 768px){
+    min-height: 300px;
+    font-size: 60px;
+  }
+  &-title{
+    padding-top: 60px;
+    font-size: 0.5em;
+    color: $idpf-color;
+  }
+  &-lead{
+    color: #888;
+    font-size: 0.25em;
+  }
+}
+
+section{
+  padding: 40px 0;
+  &#about{
+    padding-bottom: $header-height;
+    .container{
+      padding-bottom: 40px;
+    }
+  }
+  &#try{
+    background: #f9f9f9;
+  }
+}
+
+#features{
+  .feature{
+    padding-top: 40px;
+    &-body{
+      padding: 1.25em;
+    }
+    .oi{
+      font-size: 60px;
+      &-target{
+        color: $idpf-color;
+      }
+      &-timer{
+        color: $idpf-blue;
+      }
+      &-graph{
+        color: #8d172b;;
+      }
+    }
+    &-title{
+      margin-top: 20px;
+      color: #888;
+    }
+    p{
+    }
+  }
+}
+
+.try{
+  &-file{
+    .alert{
+      text-align: left;
+    }
+  }
+  &-form{
+    position: relative;
+    padding: 10px;
+    button{
+      cursor: pointer;
+    }
+    &.loading{
+      &:before{
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 10;
+        background: rgba(255, 255, 255, .8);
+      }
+      &:after{
+        content: "Requesting...";
+        display: block;
+        position: absolute;
+        z-index: 11;
+        top: 50%;
+        left: 50%;
+        color: #449d44;
+        transform: translate(-50%, 50%);
+      }
+    }
+  }
+  &-title{
+    color: #ccc;
+  }
+  &-subtitle{
+    color: $idpf-blue;
+    margin-top: 20px;
+  }
+  &-form{
+    .form-group{
+      margin: 20px 0;
+    }
+    .form-group label {
+      color: #ddd;
+    }
+  }
+}
+
+#about{
+  .col-sm{
+    margin-bottom: 40px;
+  }
+}
+
+.hl-code-example{
+  background: $idpf-blue;
+  color: #fff;
+  padding: 1em;
+  border-radius: 2px;
+}
+
+
+footer{
+  border-top: 1px solid #ccc;
+  .navbar-text{
+  }
+}
