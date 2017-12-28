@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" prefix="og: http://ogp.me/ns#">
 <head>
     <meta charset="utf-8"/>
     <title>HamePub Lint</title>
@@ -9,6 +9,13 @@
           integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <link href='/assets/css/style.css?s=<?= filemtime(dirname(__DIR__) . '/public/assets/css/style.css') ?>'
           rel="stylesheet">
+
+    <meta property="og:title" content="HamePub Lint" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="Online ePub check tool." />
+    <meta property="og:url" content="https://lint.hametuha.pub" />
+    <meta property="og:site_name" content="HamePub Lint" />
+    <meta property="og:image" content="https://lint.hametuha.pub/assets/img/background.jpeg" />
 
     <link rel="apple-touch-icon" sizes="57x57" href="/assets/img/favicons/assets/img/favicons/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="/assets/img/favicons/apple-icon-60x60.png">
@@ -27,6 +34,7 @@
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="/assets/img/favicons/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
+
 </head>
 <body data-spy="scroll" data-target="#navbar-main">
 
