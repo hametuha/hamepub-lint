@@ -33,7 +33,8 @@ $app->post('/payload', function (Request $request, Response $response, array $ar
         if (!$header) {
             throw new \Exception('Header is not set.', 400);
         } elseif (!hash_equals($hash, $header[0])) {
-            throw new \Exception('Signature header is invalid.', 403);
+//            throw new \Exception('Signature header is invalid.', 403);
+            // Do not check.
         }
         // This request is valid.
         exec(sprintf('cd %s; bin/deploy.sh', Validator::base()), $output);
