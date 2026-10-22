@@ -1,0 +1,38 @@
+# 依存を自動で更新する。テストが通れば自動マージされ（dependabot-automerge.yml）、
+# 翌朝の deploy の定期実行で本番に入る。失敗したら notify-failure.yml が Issue で知らせる。
+version: 2
+updates:
+  # Dockerfile のベースイメージ（PHP、Java、Debian、Composer）。ダイジェストで固定しているので、
+  # 上流がセキュリティ修正で作り直すたびに PR が来る。
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Asia/Tokyo
+    groups:
+      docker:
+        patterns: ["*"]
+
+  - package-ecosystem: composer
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Asia/Tokyo
+    groups:
+      composer:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Asia/Tokyo
+    groups:
+      actions:
+        patterns: ["*"]
