@@ -1,0 +1,55 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+env:
+  CLOUDSDK_CORE_PROJECT: hamepub
+  REGION: asia-northeast1
+  SERVICE: hamepub-lint
+  IMAGE: asia-northeast1-docker.pkg.dev/hamepub/hamepub-lint/app:${{ github.sha }}
+
+jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build and push image
+        run: |
+          gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+          docker build --target prod -t "${IMAGE}" .
+          docker push "${IMAGE}"
+
+      - name: Deploy to Cloud Run
+        run: |
+          # shellcheck disable=SC2016 # envsubst に渡す変数名なので展開させない
+          envsubst '${IMAGE}' < infra/service.yaml > "${RUNNER_TEMP}/service.yaml"
+          gcloud run services replace "${RUNNER_TEMP}/service.yaml" --region="${REGION}"
+
+      - name: Smoke test
+        run: |
+          url=$(gcloud run services describe "${SERVICE}" --region="${REGION}" --format='value(status.url)')
+          curl -fsS "${url}/monitor"
+          curl -fsS "${url}/" | grep -q 'Latest('

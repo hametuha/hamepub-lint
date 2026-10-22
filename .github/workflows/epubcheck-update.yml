@@ -1,0 +1,63 @@
+name: ePubCheck update
+
+# 新しい ePubCheck が出たら、デフォルトのバージョンを差し替える PR を作る。
+on:
+  schedule:
+    - cron: '0 0 * * 1' # 毎週月曜 9:00 JST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Compare versions
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          latest=$(gh release view -R w3c/epubcheck --json tagName --jq '.tagName | ltrimstr("v")')
+          current=$(sed -nE 's/^ARG EPUBCHECK_VERSIONS="([^ "]+).*/\1/p' Dockerfile)
+          echo "latest=${latest} current=${current}"
+          echo "latest=${latest}" >> "$GITHUB_OUTPUT"
+          echo "current=${current}" >> "$GITHUB_OUTPUT"
+
+      - name: Update Dockerfile
+        if: steps.version.outputs.latest != steps.version.outputs.current
+        run: |
+          sed -i -E 's/^(ARG EPUBCHECK_VERSIONS=")${{ steps.version.outputs.current }}/\1${{ steps.version.outputs.latest }}/' Dockerfile
+
+      # GITHUB_TOKEN で作った PR では Test が走らないので、ここで実行しておく
+      - name: Test with new version
+        if: steps.version.outputs.latest != steps.version.outputs.current
+        run: |
+          docker compose build
+          docker compose run --rm app composer install --no-interaction --no-progress
+          docker compose run --rm app vendor/bin/phpunit
+
+      - name: Create pull request
+        if: steps.version.outputs.latest != steps.version.outputs.current
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LATEST: ${{ steps.version.outputs.latest }}
+          CURRENT: ${{ steps.version.outputs.current }}
+        run: |
+          branch="epubcheck-${LATEST}"
+          if git ls-remote --exit-code --heads origin "${branch}" >/dev/null; then
+            echo "Branch ${branch} already exists."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "${branch}"
+          git commit -am "ePubCheck ${LATEST} に更新"
+          git push origin "${branch}"
+          gh pr create --base master --head "${branch}" \
+            --title "ePubCheck ${LATEST} に更新" \
+            --body "ePubCheck ${LATEST} がリリースされました（現在 ${CURRENT}）。テストは workflow 内で通過済みです。
+          https://github.com/w3c/epubcheck/releases/tag/v${LATEST}"
