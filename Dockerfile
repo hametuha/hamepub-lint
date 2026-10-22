@@ -28,6 +28,14 @@ ENV JAVA_HOME=/opt/java/openjdk \
     EPUBCHECK_DIR=/opt/epubcheck \
     PORT=8080
 COPY --from=epubcheck /opt/epubcheck /opt/epubcheck
+# Build class data sharing archives to shorten JVM startup (see Validator::javaOptions()).
+COPY docker/sample.epub /tmp/sample.epub
+RUN for d in /opt/epubcheck/epubcheck-*; do \
+        java -XX:TieredStopAtLevel=1 -XX:+UseSerialGC -XX:ArchiveClassesAtExit="$d/epubcheck.jsa" \
+            -jar "$d/epubcheck.jar" /tmp/sample.epub -o /tmp/result.xml > /dev/null 2>&1; \
+        test -f "$d/epubcheck.jsa"; \
+    done \
+    && rm -f /tmp/sample.epub /tmp/result.xml
 COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
 COPY docker/php.ini /usr/local/etc/php/conf.d/hamepub.ini
 RUN a2enmod rewrite \
