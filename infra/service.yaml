@@ -21,6 +21,7 @@ spec:
     spec:
       serviceAccountName: hamepub-lint-run@hamepub.iam.gserviceaccount.com
       # 1リクエストごとに JVM を起動するので、同時実行は控えめに
+      # cpu: 2 は JVM の起動を速くするため（1 CPU だと1回 8〜9 秒、2 CPU で約 5 秒）
       containerConcurrency: 4
       timeoutSeconds: 120
       containers:
@@ -30,7 +31,7 @@ spec:
               containerPort: 8080
           resources:
             limits:
-              cpu: '1'
+              cpu: '2'
               memory: 1Gi
           startupProbe:
             httpGet:

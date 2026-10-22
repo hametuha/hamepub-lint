@@ -81,6 +81,25 @@ class Validator
     }
 
     /**
+     * Get JVM options tuned for one-shot execution.
+     *
+     * ePubCheck runs once per request, so startup time matters more than peak performance.
+     * If a class data sharing archive (built in Dockerfile) exists next to the jar, use it.
+     *
+     * @param string $jar_file
+     * @return string
+     */
+    public static function javaOptions($jar_file)
+    {
+        $options = ['-XX:TieredStopAtLevel=1', '-XX:+UseSerialGC'];
+        $archive = dirname($jar_file) . '/epubcheck.jsa';
+        if (file_exists($archive)) {
+            $options[] = '-XX:SharedArchiveFile=' . escapeshellarg($archive);
+        }
+        return implode(' ', $options);
+    }
+
+    /**
      * Get project root dir.
      *
      * @return string
@@ -138,7 +157,8 @@ class Validator
             file_put_contents($tmp_epub, $data);
             // Validate epub.
             $command = sprintf(
-                'java -jar %s %s -o %s 2>&1',
+                'java %s -jar %s %s -o %s 2>&1',
+                self::javaOptions($jar_file),
                 escapeshellarg($jar_file),
                 escapeshellarg($tmp_epub),
                 escapeshellarg($tmp_result)
