@@ -1,0 +1,10 @@
+.git
+.github
+.envrc*
+node_modules
+vendor
+jar
+logs
+tests
+src
+GITHUB_TOKEN

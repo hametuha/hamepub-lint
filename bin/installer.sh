@@ -1,14 +1,25 @@
 #!/usr/bin/env bash
+#
+# Install ePubCheck into a directory.
+#
+# Usage: bin/installer.sh <version> [dest]
+#   dest defaults to ./jar (used by local development without Docker).
 
-echo "Installing epubhcheck $1..."
+set -euo pipefail
 
-cd jar
+VERSION="$1"
+DEST="${2:-jar}"
 
-if [ -e "epubcheck-$1" ]; then
+echo "Installing epubcheck ${VERSION} into ${DEST}..."
+
+mkdir -p "${DEST}"
+cd "${DEST}"
+
+if [ -e "epubcheck-${VERSION}" ]; then
     echo 'Version already exists.'
-    exit 1
+    exit 0
 fi
 
-wget https://github.com/IDPF/epubcheck/releases/download/v$1/epubcheck-$1.zip
-unzip epubcheck-$1.zip
-rm epubcheck-$1.zip
+curl -fsSL -o "epubcheck-${VERSION}.zip" "https://github.com/w3c/epubcheck/releases/download/v${VERSION}/epubcheck-${VERSION}.zip"
+unzip -q "epubcheck-${VERSION}.zip"
+rm "epubcheck-${VERSION}.zip"

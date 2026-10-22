@@ -30,7 +30,7 @@ Client ──HTTPS──▶ lint.hametuha.pub (Route53 CNAME → ghs.googlehoste
                         │
                         ▼
                 Cloud Run: hamepub-lint (asia-northeast1, project: hamepub)
-                  ├ PHP 8.3 (Slim)  … HTTP を受けて jar を起動
+                  ├ PHP 8.5 (Slim 4)  … HTTP を受けて jar を起動
                   ├ Temurin JRE 21
                   └ /opt/epubcheck/{5.4.0, 4.0.2}/epubcheck.jar
 ```
@@ -72,12 +72,12 @@ README にも同じ内容を書く。
 ## 5. 作業ステップ
 
 ### Phase 1: アプリのコンテナ化（ローカル）
-- [ ] PHP 8.3 で動くよう依存を更新（Slim 3.9 → 3.12 系、PHPUnit）。だめなら Slim 4
-- [ ] jar の場所を環境変数で切り替えられるようにする（`EPUBCHECK_DIR`）
-- [ ] デフォルトのバージョンを 5.4.0 に変更
-- [ ] `/payload` などの不要物を削除
-- [ ] Dockerfile と docker-compose.yml を作り直す
-- [ ] 既存テストを通し、サンプル EPUB で 5.4.0 と 4.0.2 の検証が通るテストを追加
+- [x] PHP 8.5 へ移行（Slim 3 → Slim 4、PHPUnit 更新）。依存に問題があれば 8.4 に下げる
+- [x] jar の場所を環境変数で切り替えられるようにする（`EPUBCHECK_DIR`）
+- [x] デフォルトのバージョンを 5.4.0 に変更
+- [x] `/payload` などの不要物を削除
+- [x] Dockerfile と docker-compose.yml を作り直す
+- [x] 既存テストを通し、サンプル EPUB で 5.4.0 と 4.0.2 の検証が通るテストを追加
 
 ### Phase 2: GCP 準備
 - [ ] API 有効化：Cloud Run、Artifact Registry、IAM Credentials
