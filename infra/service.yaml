@@ -1,0 +1,43 @@
+# hamepub-lint の Cloud Run 設定。
+# GitHub Actions が ${IMAGE} を置き換えて `gcloud run services replace` で適用する。
+# IAM（allUsers の公開設定）はここに含まれない。infra/bootstrap.sh を参照。
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: hamepub-lint
+  labels:
+    cloud.googleapis.com/location: asia-northeast1
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: '0'
+        # 濫用されても課金がここで頭打ちになる
+        autoscaling.knative.dev/maxScale: '3'
+        # JVM の起動を速くする
+        run.googleapis.com/startup-cpu-boost: 'true'
+    spec:
+      serviceAccountName: hamepub-lint-run@hamepub.iam.gserviceaccount.com
+      # 1リクエストごとに JVM を起動するので、同時実行は控えめに
+      containerConcurrency: 4
+      timeoutSeconds: 120
+      containers:
+        - image: ${IMAGE}
+          ports:
+            - name: http1
+              containerPort: 8080
+          resources:
+            limits:
+              cpu: '1'
+              memory: 1Gi
+          startupProbe:
+            httpGet:
+              path: /monitor
+              port: 8080
+          livenessProbe:
+            httpGet:
+              path: /monitor
+              port: 8080
+            periodSeconds: 60

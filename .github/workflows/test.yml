@@ -1,0 +1,24 @@
+name: Test
+
+on:
+  pull_request:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build dev image
+        run: docker compose build
+
+      - name: Install dependencies
+        run: docker compose run --rm app composer install --no-interaction --no-progress
+
+      - name: Run PHPUnit
+        run: docker compose run --rm app vendor/bin/phpunit
