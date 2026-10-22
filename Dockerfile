@@ -3,8 +3,13 @@
 # Versions of ePubCheck to bundle. The newest becomes the default of /validator.
 ARG EPUBCHECK_VERSIONS="5.4.0 4.0.2"
 
+# Base images are pinned by digest so that Dependabot opens a PR whenever upstream rebuilds them
+# (security fixes of PHP, Java and Debian). COPY --from uses these stages for the same reason.
+FROM composer:2@sha256:da624c2c705d54e2f5a9bb77a5dc6c7d091711433ebefd7035672e84c2010fee AS composer
+FROM eclipse-temurin:21-jre@sha256:227118764cccd3c3294617061aaa93a08309c63a395eefa83e6b35032992ea99 AS jre
+
 # ---- ePubCheck jars
-FROM debian:bookworm-slim AS epubcheck
+FROM debian:trixie-slim@sha256:62bd423aeee912639ca8ee681c2b762cb3e25137e0a92b20be455898a9f034ad AS epubcheck
 ARG EPUBCHECK_VERSIONS
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates curl unzip \
@@ -13,7 +18,7 @@ COPY bin/installer.sh /usr/local/bin/installer.sh
 RUN for v in ${EPUBCHECK_VERSIONS}; do installer.sh "$v" /opt/epubcheck; done
 
 # ---- Composer dependencies
-FROM composer:2 AS vendor
+FROM composer AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --no-scripts --no-autoloader --ignore-platform-reqs --prefer-dist
@@ -21,8 +26,8 @@ COPY app app
 RUN composer dump-autoload --no-dev --optimize
 
 # ---- Runtime
-FROM php:8.5-apache AS base
-COPY --from=eclipse-temurin:21-jre /opt/java/openjdk /opt/java/openjdk
+FROM php:8.5-apache@sha256:5fec3fb1f0322c20a01c8af35a09a96f3a83aa369650b0fed161e91cb84056ed AS base
+COPY --from=jre /opt/java/openjdk /opt/java/openjdk
 ENV JAVA_HOME=/opt/java/openjdk \
     PATH="/opt/java/openjdk/bin:${PATH}" \
     EPUBCHECK_DIR=/opt/epubcheck \
@@ -50,7 +55,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends libzip-dev unzip \
     && docker-php-ext-install zip \
     && rm -rf /var/lib/apt/lists/*
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # ---- Production
 FROM base AS prod

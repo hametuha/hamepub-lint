@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: write # Test を起動するため
   contents: write
   pull-requests: write
 
@@ -32,14 +33,6 @@ jobs:
         run: |
           sed -i -E 's/^(ARG EPUBCHECK_VERSIONS=")${{ steps.version.outputs.current }}/\1${{ steps.version.outputs.latest }}/' Dockerfile
 
-      # GITHUB_TOKEN で作った PR では Test が走らないので、ここで実行しておく
-      - name: Test with new version
-        if: steps.version.outputs.latest != steps.version.outputs.current
-        run: |
-          docker compose build
-          docker compose run --rm app composer install --no-interaction --no-progress
-          docker compose run --rm app vendor/bin/phpunit
-
       - name: Create pull request
         if: steps.version.outputs.latest != steps.version.outputs.current
         env:
@@ -59,5 +52,9 @@ jobs:
           git push origin "${branch}"
           gh pr create --base master --head "${branch}" \
             --title "ePubCheck ${LATEST} に更新" \
-            --body "ePubCheck ${LATEST} がリリースされました（現在 ${CURRENT}）。テストは workflow 内で通過済みです。
+            --body "ePubCheck ${LATEST} がリリースされました（現在 ${CURRENT}）。
           https://github.com/w3c/epubcheck/releases/tag/v${LATEST}"
+          # GITHUB_TOKEN で作った PR では Test が起動しないので明示的に起動する（workflow_dispatch は例外的に起動できる）。
+          # 必須チェックの phpunit が通れば auto-merge される。失敗したら notify-failure.yml が知らせる。
+          gh workflow run test.yml --ref "${branch}"
+          gh pr merge --auto --squash "${branch}"
