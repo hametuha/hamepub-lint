@@ -56,8 +56,14 @@ for sa in hamepub-lint-run:"hamepub-lint Cloud Run runtime" hamepub-lint-deploy:
     name="${sa%%:*}"
     if ! gcloud iam service-accounts describe "${name}@${PROJECT_ID}.iam.gserviceaccount.com" >/dev/null 2>&1; then
         gcloud iam service-accounts create "${name}" --display-name="${sa#*:}"
+        CREATED_SA=1
     fi
 done
+# 作成直後の SA は IAM ポリシーから見えるまで時間がかかる（結果整合性）
+if [ -n "${CREATED_SA:-}" ]; then
+    echo "    SA の反映を待っています（60秒）..."
+    sleep 60
+fi
 
 echo "==> デプロイ用 SA の権限"
 # Cloud Run の更新（IAM は触れない）
