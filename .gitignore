@@ -11,3 +11,6 @@ GITHUB_TOKEN
 .envrc.local
 .phpunit.result.cache
 .phpunit.cache/
+
+# Claude Code の個人用設定
+.claude/settings.local.json
