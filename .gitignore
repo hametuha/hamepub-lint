@@ -6,3 +6,6 @@ logs/
 !logs/README.md
 public/.well-known
 GITHUB_TOKEN
+
+# direnv の個人用上書き（.envrc はシークレットを含まないので追跡する）
+.envrc.local
