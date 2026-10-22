@@ -80,29 +80,37 @@ README にも同じ内容を書く。
 - [x] 既存テストを通し、サンプル EPUB で 5.4.0 と 4.0.2 の検証が通るテストを追加
 
 ### Phase 2: GCP 準備
-- [ ] API 有効化：Cloud Run、Artifact Registry、IAM Credentials
-- [ ] Artifact Registry リポジトリ作成
-- [ ] デプロイ用サービスアカウントと Workload Identity Federation（`hametuha/hamepub-lint` のみ許可）
-- [ ] 実行用サービスアカウント（権限なし）
+- [x] API 有効化：Cloud Run、Artifact Registry、IAM Credentials
+- [x] Artifact Registry リポジトリ作成
+- [x] デプロイ用サービスアカウントと Workload Identity Federation（`hametuha/hamepub-lint` のみ許可）
+- [x] 実行用サービスアカウント（権限なし）
 
 ### Phase 3: CI/CD
-- [ ] GitHub Actions：push / PR でテスト
-- [ ] GitHub Actions：`master` への push でビルドしてデプロイ
-- [ ] GitHub Actions：EPUBCheck の新リリース検知
+- [x] GitHub Actions：push / PR でテスト
+- [x] GitHub Actions：`master` への push でビルドしてデプロイ
+- [x] GitHub Actions：EPUBCheck の新リリース検知
 
 ### Phase 4: 切り替え
-- [ ] `*.run.app` の URL で Web UI・API の動作確認
-- [ ] Cloud Run ドメインマッピング `lint.hametuha.pub` を作成
-- [ ] Route53：`lint` を A → `CNAME ghs.googlehosted.com.` に変更
-- [ ] 証明書の発行を確認し、はめにゅー本体から検証が通ることを確認
+- [x] `*.run.app` の URL で Web UI・API の動作確認
+- [x] Cloud Run ドメインマッピング `lint.hametuha.pub` を作成
+- [x] Route53：`lint` を A → `CNAME ghs.googlehosted.com.` に変更
+- [x] 証明書の発行を確認し、はめにゅー本体から検証が通ることを確認
 
 ### Phase 5: 後片付け
-- [ ] Route53 の不要レコード削除：apex A、`www`、MX、xserver 向け SPF、`_adsp._domainkey` ×2
-- [ ] Route53 に `v=spf1 -all` と Null MX（`0 .`）を追加
-- [ ] EC2・EBS・EIP を削除（hametuha-infra#32 にも報告）
-- [ ] README 更新
+- [x] README 更新
+- [x] `lint` の `_adsp._domainkey` を削除（CNAME と共存できないため切り替え時に実施）
+- [ ] EC2・EBS・EIP を削除 → hametuha/hametuha-infra#35
+- [ ] Route53 の不要レコード整理、XServer の確認 → hametuha/hametuha-infra#36
 
-## 6. 別 Issue に切り出すもの
+## 6. 別 Issue に切り出したもの
 
-- XServer の契約が残っていれば解約
-- bitfield/checkepub への連絡（`http://` → `https://`、デフォルトが 5.x に変わったこと）
+- hametuha/hametuha-infra#35：旧 EC2・EBS・EIP の削除
+- hametuha/hametuha-infra#36：`hametuha.pub` の Route53 整理と XServer の確認
+- #4：bitfield/checkepub に `https://` への変更 PR を送る（Cloud Run は `http://` を 302 でリダイレクトするため、POST が通らない）
+
+## 7. 結果（2026-10-22）
+
+- `https://lint.hametuha.pub` で稼働。はめにゅー本体からの検証も通ることを Cloud Run のログで確認
+- 1回の検証にかかる時間：5.4.0 で約 5.6 秒、4.0.2 で約 2.2 秒（2 CPU、JVM フラグ、AppCDS）
+  - 1 CPU のままだと約 13 秒。gen2 にしても変わらなかった
+  - これ以上速くするには JVM を常駐させる必要があるが、現在の使い方では不要と判断
