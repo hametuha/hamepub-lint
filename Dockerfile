@@ -5,7 +5,7 @@ ARG EPUBCHECK_VERSIONS="5.4.0 4.0.2"
 
 # Base images are pinned by digest so that Dependabot opens a PR whenever upstream rebuilds them
 # (security fixes of PHP, Java and Debian). COPY --from uses these stages for the same reason.
-FROM composer:2@sha256:da624c2c705d54e2f5a9bb77a5dc6c7d091711433ebefd7035672e84c2010fee AS composer
+FROM composer:2@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c430a5fc AS composer
 FROM eclipse-temurin:25-jre@sha256:dbb43d81099eec91e0800226ed2296d03146ee7857165b95112372ad0d67e87f AS jre
 
 # ---- ePubCheck jars
