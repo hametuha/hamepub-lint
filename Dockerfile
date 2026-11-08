@@ -9,7 +9,7 @@ FROM composer:2@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c
 FROM eclipse-temurin:25-jre@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0 AS jre
 
 # ---- ePubCheck jars
-FROM debian:trixie-slim@sha256:f6b08b09a05725f9431502d3b5714f5c4576e82c1a84fa1debe0c24a7e0c3ec4 AS epubcheck
+FROM debian:trixie-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2 AS epubcheck
 ARG EPUBCHECK_VERSIONS
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates curl unzip \
