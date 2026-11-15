@@ -5,8 +5,8 @@ ARG EPUBCHECK_VERSIONS="5.4.0 4.0.2"
 
 # Base images are pinned by digest so that Dependabot opens a PR whenever upstream rebuilds them
 # (security fixes of PHP, Java and Debian). COPY --from uses these stages for the same reason.
-FROM composer:2@sha256:b6dcd72ca98fa19d0e5b8476de179859704891fad06dd9e0b96833d4c430a5fc AS composer
-FROM eclipse-temurin:25-jre@sha256:ecdc0adb37bde1a281c4d245a3cd535004b1fc8322d560f5b09463b248c81df0 AS jre
+FROM composer:2@sha256:ca11f643d7791ebdd90a34fc20caf11380d434007ae539a9ea75cd9212e13dca AS composer
+FROM eclipse-temurin:25-jre@sha256:a640968ae55027b322cedd5f8228b01a84baff0b9e9360e47601c6a111ba1699 AS jre
 
 # ---- ePubCheck jars
 FROM debian:trixie-slim@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2 AS epubcheck
@@ -26,7 +26,7 @@ COPY app app
 RUN composer dump-autoload --no-dev --optimize
 
 # ---- Runtime
-FROM php:8.5-apache@sha256:5fec3fb1f0322c20a01c8af35a09a96f3a83aa369650b0fed161e91cb84056ed AS base
+FROM php:8.5-apache@sha256:08af36df144462d84c7f16190557eec06cb9f656882685610b712a15eec54d46 AS base
 COPY --from=jre /opt/java/openjdk /opt/java/openjdk
 ENV JAVA_HOME=/opt/java/openjdk \
     PATH="/opt/java/openjdk/bin:${PATH}" \
